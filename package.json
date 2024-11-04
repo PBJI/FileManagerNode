@@ -1,0 +1,35 @@
+{
+  "name": "filemanagernode",
+  "version": "2.0.6",
+  "description": "This is simple class based file and folder manager for Node.JS to simplify few operations in application that require constant use local files.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "files",
+    "filemanager",
+    "nodejs",
+    "folder",
+    "foldermanager",
+    "foldergenerate",
+    "logmanager",
+    "tempgenerate",
+    "tempcreate",
+    "logcreate",
+    "createlog",
+    "createtemp",
+    "managefolder",
+    "nodefilehandler",
+    "fileoperationstool",
+    "nodefileutility",
+    "filemanagementsystem",
+    "folderoperations",
+    "filehandler",
+    "filemanagerapi",
+    "filesystemmanager",
+    "fileorganizer"
+  ],
+  "author": "PBJI",
+  "license": "ISC"
+}
