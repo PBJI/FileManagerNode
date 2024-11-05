@@ -71,26 +71,65 @@ class FileManager {
 		}
 	}
 
-	// Method to create a basic file
-	createBasicFile(filePath) {
+	createBasicFile(filePath, mode = "preserve") {
 		this.ensurePathExists(path.dirname(filePath));
-		fs.writeFileSync(filePath, "");
-		const key = path.basename(filePath);
-		this.files[key] = filePath;
+		const baseFileName = path.basename(filePath, path.extname(filePath));
+		const fileExtension = path.extname(filePath);
+
+		let finalPath = filePath;
+		let key = baseFileName;
+
+		switch (mode) {
+			case "preserve":
+				if (fs.existsSync(filePath)) {
+					this.files[key] = filePath;
+					return key;
+				}
+				break;
+
+			case "overwrite":
+				fs.writeFileSync(filePath, "");
+				break;
+
+			case "unique":
+				let counter = 1;
+				while (fs.existsSync(finalPath)) {
+					finalPath = path.join(path.dirname(filePath), `${baseFileName}_${counter}${fileExtension}`);
+					key = `${baseFileName}_${counter}`;
+					counter++;
+				}
+				break;
+
+			default:
+				throw new Error("Invalid mode. Use 'preserve', 'overwrite', or 'unique'.");
+		}
+
+		// Create the file in 'strict' or 'new' mode if it doesn’t already exist
+		fs.writeFileSync(finalPath, "");
+		this.files[key] = finalPath;
 		return key;
 	}
 
 	// Modification for createLogFile method in FileManager class
 
-	createLogFile(directoryPath, mode = "date", incrementFlag = false) {
+	createLogFile(directoryPath, namingMode = "date", fileMode = "reuse") {
 		this.ensurePathExists(directoryPath);
 
 		let finalPath;
-		if (mode === "date") {
+		if (namingMode === "date") {
 			// Date Mode: File with today's date
 			const date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
 			finalPath = path.join(directoryPath, `log_${date}.txt`);
-		} else if (mode === "increment") {
+
+			// In 'unique' fileMode, append an increment if a file with today's date exists
+			if (fileMode === "unique" && fs.existsSync(finalPath)) {
+				let counter = 1;
+				while (fs.existsSync(finalPath)) {
+					finalPath = path.join(directoryPath, `log_${date}_${counter}.txt`);
+					counter++;
+				}
+			}
+		} else if (namingMode === "increment") {
 			// Increment Mode: File with incremented number
 			const existingFiles = fs
 				.readdirSync(directoryPath)
@@ -99,29 +138,67 @@ class FileManager {
 				.filter((num) => !isNaN(num))
 				.sort((a, b) => a - b);
 
-			let latestIndex = existingFiles.length ? existingFiles[existingFiles.length - 1] : incrementFlag ? -1 : 0;
-			if (incrementFlag) {
-				latestIndex += 1; // Create new incremented file
+			let latestIndex = existingFiles.length ? existingFiles[existingFiles.length - 1] : 0;
+
+			if (fileMode === "unique" || (fileMode === "reuse" && !fs.existsSync(path.join(directoryPath, `log_${latestIndex}.txt`)))) {
+				latestIndex += 1; // Create a new incremented file in unique or reuse mode if it doesn't already exist
 			}
+
 			finalPath = path.join(directoryPath, `log_${latestIndex}.txt`);
 		} else {
-			throw new Error("Invalid mode specified. Use 'date' or 'increment'.");
+			throw new Error("Invalid naming mode specified. Use 'date' or 'increment'.");
 		}
 
-		// Ensure the file exists (append mode for existing logs)
-		fs.writeFileSync(finalPath, "", { flag: "a" });
+		// Handle file creation based on the specified fileMode
+		if (fileMode === "reuse" && fs.existsSync(finalPath)) {
+			// Do nothing, just use the existing file
+		} else if (fileMode === "overwrite") {
+			fs.writeFileSync(finalPath, ""); // Clear the file
+		} else if (!fs.existsSync(finalPath)) {
+			fs.writeFileSync(finalPath, ""); // Create new file if it doesn't exist
+		}
+
 		const key = path.basename(finalPath);
 		this.files[key] = finalPath;
 		return key;
 	}
 
 	// Method to create a temporary file
-	createTempFile(filePath) {
+	createTempFile(filePath, mode = "reuse") {
 		this.ensurePathExists(path.dirname(filePath));
-		const tempKey = "temp_" + path.basename(filePath); // Add "temp_" prefix for consistent temp identification
-		const tempPath = path.join(path.dirname(filePath), tempKey);
+		const baseFileName = path.basename(filePath);
+		let tempKey = `temp_${baseFileName}`; // Consistent prefix for temp files
+		let tempPath = path.join(path.dirname(filePath), tempKey);
 
-		fs.writeFileSync(tempPath, "");
+		switch (mode) {
+			case "reuse":
+				if (fs.existsSync(tempPath)) {
+					// Reuse the existing temporary file
+					break;
+				}
+			// If the file doesn't exist, fall through to create it
+
+			case "overwrite":
+				// Overwrite any existing temp file with the same name
+				fs.writeFileSync(tempPath, "");
+				break;
+
+			case "unique":
+				// Create a unique temp file by appending an increment if needed
+				let counter = 1;
+				while (fs.existsSync(tempPath)) {
+					tempKey = `temp_${baseFileName}_${counter}`;
+					tempPath = path.join(path.dirname(filePath), tempKey);
+					counter++;
+				}
+				fs.writeFileSync(tempPath, "");
+				break;
+
+			default:
+				throw new Error("Invalid mode specified. Use 'reuse', 'overwrite', or 'unique'.");
+		}
+
+		// Track the temp file in the relevant data structures
 		this.files[tempKey] = tempPath;
 		this.tempFiles.add(tempKey);
 		return tempKey;
@@ -159,8 +236,6 @@ class FileManager {
 			throw new Error("File not found");
 		}
 	}
-
-	
 
 	// Read data from file by key
 	readFile(key) {

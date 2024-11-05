@@ -4,7 +4,7 @@ A robust and versatile file and folder manager for Node.js applications. The `Fi
 
 ## Update Notice
 
-The latest version of **filemangernode** has shifted from a class-based to an object-based, global architecture. This update means the package no longer exports a class but instead initializes a **global `fileManager` object** accessible throughout any project module. To utilize this global object, simply `require` the package once in any connected module, and `fileManager` will become available across your application without further imports. 
+Version 3.0 **filemangernode** has shifted from a class-based to an object-based, global architecture. This update means the package no longer exports a class but instead initializes a **global `fileManager` object** accessible throughout any project module. To utilize this global object, simply `require` the package once in any connected module, and `fileManager` will become available across your application without further imports. 
 
 **Important:** This change introduces `fileManager` to the global namespace, potentially causing conflicts if an existing `fileManager` variable or instance already exists in your project. Before upgrading, check your project for any `fileManager` object instances to prevent naming conflicts. This update enhances accessibility but requires caution, as multiple inclusions or unintentional overrides of `fileManager` may lead to unpredictable behavior.
 
@@ -301,24 +301,37 @@ The `fileManager` object provides methods for managing files and directories wit
    - **Parameters**:
      - `dirPath` (string): The path of the directory to be deleted.
 
-5. **`createBasicFile(filePath)`**
+5. **`createBasicFile(filePath, fileMode)`**
    - Creates a basic file at the specified path.
    - **Parameters**:
      - `filePath` (string): The path where the file should be created.
+     - `fileMode` (string): The mode in which to create the file, "preserve", "overwrite" or "unique"
+   - **Filemode Options**:
+     - "preserve": If the file already exists, it will not be overwritten.
+     - "overwrite": If the file already exists, it will be overwritten.
+     - "unique": If the file already exists, a numeric suffix will be added to create a unique file.
    - **Returns**: A key (string) representing the file.
 
-6. **`createLogFile(directoryPath, mode = "date", incrementFlag = false)`**
+6. **`createLogFile(directoryPath, namingMode = "date", fileMode = "reuse")`**
    - Creates a log file in the specified directory, with options for naming based on date or increment.
    - **Parameters**:
      - `directoryPath` (string): The path where the log file should be created.
-     - `mode` (string): The naming mode for the log file, either "date" or "increment".
-     - `incrementFlag` (boolean): Whether to create a new incremented log file if mode is "increment".
+     - `namingMode` (string): The naming mode for the log file, either "date" or "increment".
+     - `fileMode` (string): The mode in which to create the file, "preserve", "overwrite" or "unique"
+   - **Filemode Options**:
+     - "preserve": If the file already exists, it will not be overwritten.
+     - "overwrite": If the file already exists, it will be overwritten.
+     - "unique": If the file already exists, a numeric suffix will be added to create a unique file.
    - **Returns**: A key (string) representing the log file.
 
-7. **`createTempFile(filePath)`**
+7. **`createTempFile(filePath, fileMode)`**
    - Creates a temporary file with a prefixed name for identification.
    - **Parameters**:
      - `filePath` (string): The path for the temporary file.
+   - **Filemode Options**:
+     - "preserve": If the file already exists, it will not be overwritten.
+     - "overwrite": If the file already exists, it will be overwritten.
+     - "unique": If the file already exists, a numeric suffix will be added to create a unique file.
    - **Returns**: A key (string) for the temporary file.
 
 8. **`addAlias(alias, originalKey)`**
