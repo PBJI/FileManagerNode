@@ -141,15 +141,26 @@ class FileManager {
 		return this.aliases[key] || key;
 	}
 
+	formatData(data, pretty = true) {
+		// If data is not a string, assume it's an object and format as JSON
+		if (typeof data == "object") {
+			return pretty ? JSON.stringify(data, null, 2) : JSON.stringify(data);
+		}
+		return data; // If already a string, return as-is
+	}
+
 	// Write data to file by key
-	writeToFile(key, data) {
+	writeToFile(key, data, pretty = true) {
 		key = this.resolveKey(key);
 		if (this.files[key]) {
-			fs.writeFileSync(this.files[key], data);
+			const formattedData = this.formatData(data, pretty);
+			fs.writeFileSync(this.files[key], formattedData);
 		} else {
 			throw new Error("File not found");
 		}
 	}
+
+	
 
 	// Read data from file by key
 	readFile(key) {
@@ -162,10 +173,11 @@ class FileManager {
 	}
 
 	// Append data to file by key
-	appendToFile(key, data) {
+	appendToFile(key, data, pretty = true) {
 		key = this.resolveKey(key);
 		if (this.files[key]) {
-			fs.appendFileSync(this.files[key], data);
+			const formattedData = this.formatData(data, pretty);
+			fs.appendFileSync(this.files[key], formattedData);
 		} else {
 			throw new Error("File not found");
 		}
@@ -293,4 +305,8 @@ class FileManager {
 	}
 }
 
-module.exports = { FileManager };
+const fileManager = new FileManager();
+
+global.fileManager = fileManager;
+
+module.exports = fileManager;

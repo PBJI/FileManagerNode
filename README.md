@@ -2,6 +2,12 @@
 
 A robust and versatile file and folder manager for Node.js applications. The `FileManager` class provides various functionalities to create, delete, read, write, and manipulate files and directories. This package is designed for developers who need a simple yet powerful way to manage their file systems. Very small and lightweight, it can be easily integrated into any Node.js project.
 
+## Update Notice
+
+The latest version of **filemangernode** has shifted from a class-based to an object-based, global architecture. This update means the package no longer exports a class but instead initializes a **global `fileManager` object** accessible throughout any project module. To utilize this global object, simply `require` the package once in any connected module, and `fileManager` will become available across your application without further imports. 
+
+**Important:** This change introduces `fileManager` to the global namespace, potentially causing conflicts if an existing `fileManager` variable or instance already exists in your project. Before upgrading, check your project for any `fileManager` object instances to prevent naming conflicts. This update enhances accessibility but requires caution, as multiple inclusions or unintentional overrides of `fileManager` may lead to unpredictable behavior.
+
 ## Features
 
 - **Create Folder Structures:** Easily create nested folder structures.
@@ -24,12 +30,10 @@ npm install filemanagernode
 
 ## Usage
 
-To use the `FileManager` class in your application, require it and create an instance:
+To use the `fileManager` object in your application, simply require the package in any connected project module and file manager will be shared across all the project files, no need to pass it around:
 
 ```javascript
-const { FileManager } = require('file-manager');
-
-const fileManager = new FileManager();
+require("filemanagenode")
 ```
 
 ---
@@ -265,9 +269,9 @@ console.log('All managed files:', fileManager.files);
 ## API Reference
 
 
-### `FileManager`
+### `fileManager`
 
-The `FileManager` class provides methods for managing files and directories within a Node.js environment.
+The `fileManager` object provides methods for managing files and directories within a Node.js environment.
 
 #### Data Members
 
@@ -332,9 +336,11 @@ The `FileManager` class provides methods for managing files and directories with
 
 10. **`writeToFile(key, data)`**
     - Writes data to a file identified by the provided key.
+    - Writes json data to a file in pretty format by default.
     - **Parameters**:
       - `key` (string): The key representing the file.
       - `data` (string): The data to be written to the file.
+      - `pretty` (boolean): By default true, if false, object (json) data will be written as it is.
     - **Throws**: An error if the file is not found.
 
 11. **`readFile(key)`**
@@ -346,9 +352,11 @@ The `FileManager` class provides methods for managing files and directories with
 
 12. **`appendToFile(key, data)`**
     - Appends data to a file identified by the provided key.
+    - Appends json data to a file in pretty format by default.
     - **Parameters**:
       - `key` (string): The key representing the file.
       - `data` (string): The data to be appended to the file.
+      - `pretty` (boolean): By default true, if false, object (json) data will be appended as it is.
     - **Throws**: An error if the file is not found.
 
 13. **`renameFile(oldKey, newName)`**
@@ -430,7 +438,7 @@ The `FileManager` class provides methods for managing files and directories with
 
 ## Contributing
 
-Contributions are welcome! If you find any bugs or have feature requests, feel free to open an issue or submit a pull request.
+Contributions are welcome! If you find any bugs or have feature requests, feel free to open an issue or submit a pull request. [Github](https://github.com/PBJI/FileManagerNode)
 
 ## License
 
