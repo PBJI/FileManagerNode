@@ -34,5 +34,6 @@
   "license": "ISC",
   "repository": {
     "url": "https://github.com/PBJI/FileManagerNode"
-  }
+  },
+  "homepage": "https://github.com/PBJI/FileManagerNode"
 }
