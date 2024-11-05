@@ -112,7 +112,7 @@ class FileManager {
 
 	// Modification for createLogFile method in FileManager class
 
-	createLogFile(directoryPath, namingMode = "date", fileMode = "reuse") {
+	createLogFile(directoryPath, namingMode = "date", fileMode = "preserve") {
 		this.ensurePathExists(directoryPath);
 
 		let finalPath;
@@ -140,8 +140,8 @@ class FileManager {
 
 			let latestIndex = existingFiles.length ? existingFiles[existingFiles.length - 1] : 0;
 
-			if (fileMode === "unique" || (fileMode === "reuse" && !fs.existsSync(path.join(directoryPath, `log_${latestIndex}.txt`)))) {
-				latestIndex += 1; // Create a new incremented file in unique or reuse mode if it doesn't already exist
+			if (fileMode === "unique" || (fileMode === "preserve" && !fs.existsSync(path.join(directoryPath, `log_${latestIndex}.txt`)))) {
+				latestIndex += 1; // Create a new incremented file in unique or preserve mode if it doesn't already exist
 			}
 
 			finalPath = path.join(directoryPath, `log_${latestIndex}.txt`);
@@ -150,7 +150,7 @@ class FileManager {
 		}
 
 		// Handle file creation based on the specified fileMode
-		if (fileMode === "reuse" && fs.existsSync(finalPath)) {
+		if (fileMode === "preserve" && fs.existsSync(finalPath)) {
 			// Do nothing, just use the existing file
 		} else if (fileMode === "overwrite") {
 			fs.writeFileSync(finalPath, ""); // Clear the file
@@ -164,16 +164,16 @@ class FileManager {
 	}
 
 	// Method to create a temporary file
-	createTempFile(filePath, mode = "reuse") {
+	createTempFile(filePath, mode = "preserve") {
 		this.ensurePathExists(path.dirname(filePath));
 		const baseFileName = path.basename(filePath);
 		let tempKey = `temp_${baseFileName}`; // Consistent prefix for temp files
 		let tempPath = path.join(path.dirname(filePath), tempKey);
 
 		switch (mode) {
-			case "reuse":
+			case "preserve":
 				if (fs.existsSync(tempPath)) {
-					// Reuse the existing temporary file
+					// preserve the existing temporary file
 					break;
 				}
 			// If the file doesn't exist, fall through to create it
@@ -195,7 +195,7 @@ class FileManager {
 				break;
 
 			default:
-				throw new Error("Invalid mode specified. Use 'reuse', 'overwrite', or 'unique'.");
+				throw new Error("Invalid mode specified. Use 'preserve', 'overwrite', or 'unique'.");
 		}
 
 		// Track the temp file in the relevant data structures
