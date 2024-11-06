@@ -7,21 +7,33 @@ class FileManager {
 		this.files = {}; // Store file paths with keys
 		this.tempFiles = new Set();
 		this.aliases = {};
-		process.on("exit", (code) => {
-			this.clearTempFiles();
-		});
+
+		process.on("exit", this.clearTempFiles);
+		process.on("SIGINT", this.clearTempFiles);
+		process.on("SIGOUT", this.clearTempFiles);
 	}
 
 	// Method to create folders with nested structure
 	createFolderStructure(basePath, folderArray) {
 		const createFolders = (currentPath, folders) => {
-			folders.forEach((folder) => {
+			folders.forEach((folder, index) => {
 				if (Array.isArray(folder)) {
-					createFolders(currentPath, folder);
+					// Create a new path for the nested folder
+					const nestedFolderName = folders[index > 0 ? index - 1 : 0]; // Assume the first element is the name of the parent folder
+					const nestedFolderPath = path.join(currentPath, nestedFolderName);
+
+					// Create the parent folder if it doesn't exist
+					if (!fs.existsSync(nestedFolderPath)) {
+						fs.mkdirSync(nestedFolderPath);
+					}
+
+					// Call recursively for the nested folders (excluding the first element)
+					createFolders(nestedFolderPath, folder);
 				} else {
-					currentPath = path.join(currentPath, folder);
-					if (!fs.existsSync(currentPath)) {
-						fs.mkdirSync(currentPath);
+					// Create a sibling folder at the current path
+					const newFolderPath = path.join(currentPath, folder);
+					if (!fs.existsSync(newFolderPath)) {
+						fs.mkdirSync(newFolderPath);
 					}
 				}
 			});
@@ -31,34 +43,38 @@ class FileManager {
 
 	// Delete specific folders based on provided structure
 	deleteFolderStructure(basePath, folderArray) {
-		const deleteFolders = (currentPath, folders) => {
-			for (let i = 0; i < folders.length; i++) {
-				const folder = folders[i];
+		const traverseAndDelete = (currentPath, structure) => {
+			let lastDirPath = null; // Store last directory path for deletion checks
 
-				if (folder === "*") {
-					// Next item is an array of subdirectories to delete
-					const subDirsToDelete = folders[i + 1];
-					if (Array.isArray(subDirsToDelete)) {
-						subDirsToDelete.forEach((subDir) => {
-							const subDirPath = path.join(currentPath, subDir);
-							this.deleteDirectory(subDirPath);
-						});
-						i++; // Skip over subdirectory list
+			structure.forEach((item, index) => {
+				if (Array.isArray(item)) {
+					// Nested structure - recursively handle subdirectories
+					if (lastDirPath) {
+						traverseAndDelete(lastDirPath, item);
 					}
-				} else if (folder === "..") {
-					// Go up a directory
-					currentPath = path.dirname(currentPath);
+
+					// Delete the folder if no further sibling array follows and it is empty
+					if (lastDirPath && index === structure.length - 1 && this.isDirectoryEmpty(lastDirPath)) {
+						this.deleteDirectory(lastDirPath);
+					}
 				} else {
-					// Go into the specified folder
-					currentPath = path.join(currentPath, folder);
-					if (!fs.existsSync(currentPath)) {
-						continue; // Skip if directory does not exist
+					// Folder string - create path and save it for conditional deletion check
+					lastDirPath = path.join(currentPath, item);
+
+					// Only delete if the folder exists and it's not the base path
+					if (fs.existsSync(lastDirPath) && lastDirPath !== basePath) {
+						// Check if the next item is not an array to see if we should delete
+						const nextItem = structure[index + 1];
+						if (!Array.isArray(nextItem) && this.isDirectoryEmpty(lastDirPath)) {
+							this.deleteDirectory(lastDirPath);
+						}
 					}
 				}
-			}
+			});
 		};
 
-		deleteFolders(basePath, folderArray);
+		// Start the traversal from the base path
+		traverseAndDelete(basePath, folderArray);
 	}
 
 	// Helper function to delete a directory and all its contents
@@ -69,6 +85,11 @@ class FileManager {
 		} else {
 			console.log(`Directory not found: ${dirPath}`);
 		}
+	}
+
+	// Helper function to check if directory is empty
+	isDirectoryEmpty(dirPath) {
+		return fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0;
 	}
 
 	createBasicFile(filePath, mode = "preserve") {
@@ -227,11 +248,11 @@ class FileManager {
 	}
 
 	// Write data to file by key
-	writeToFile(key, data, pretty = true) {
+	writeToFile(key, data, { pretty = true, newline = true }) {
 		key = this.resolveKey(key);
 		if (this.files[key]) {
 			const formattedData = this.formatData(data, pretty);
-			fs.writeFileSync(this.files[key], formattedData);
+			fs.writeFileSync(this.files[key], formattedData + (newline ? "\n" : ""));
 		} else {
 			throw new Error("File not found");
 		}
@@ -248,11 +269,11 @@ class FileManager {
 	}
 
 	// Append data to file by key
-	appendToFile(key, data, pretty = true) {
+	appendToFile(key, data, { pretty = true, newline = true }) {
 		key = this.resolveKey(key);
 		if (this.files[key]) {
 			const formattedData = this.formatData(data, pretty);
-			fs.appendFileSync(this.files[key], formattedData);
+			fs.appendFileSync(this.files[key], formattedData + (newline ? "\n" : ""));
 		} else {
 			throw new Error("File not found");
 		}

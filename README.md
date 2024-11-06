@@ -114,7 +114,7 @@ console.log('File deleted.');
 
 ---
 
-### 9a. Creating a Log File
+### 9. Creating a Log File
 
 Create a log file in **date mode**. This will create a file named with the current date:
 
@@ -130,9 +130,9 @@ const logFileKeyIncr = fileManager.createLogFile('/path/to/logs', 'increment', f
 console.log(`Log file created in date mode with key: ${logFileKeyIncr}`);
 ```
 
-### 9b. Creating a Temporary File
+### 10. Creating a Temporary File
 
-Create a temporary file and return its key:
+Create a temporary file and return its key, temporary files are special because they get automatically deleted after the program exits:
 
 ```javascript
 const tempKey = fileManager.createTempFile('/path/to/tempfile.txt');
@@ -141,7 +141,7 @@ console.log(`Created temporary file with key: ${tempKey}`);
 
 ---
 
-### 10. Adding an Alias
+### 11. Adding an Alias
 
 Add an alias for a file:
 
@@ -149,16 +149,6 @@ Add an alias for a file:
 fileManager.addAlias('myLog', fileKey);
 console.log('Alias added.');
 ```
-
-### 11. Resolving an Alias
-
-Resolve an alias to get the original key:
-
-```javascript
-const resolvedKey = fileManager.resolveKey('myLog');
-console.log(`Resolved key: ${resolvedKey}`);
-```
-
 ---
 
 ### 12. Checking File Existence
@@ -249,22 +239,15 @@ fileManager.deleteDirectory('/path/to/directory');
 console.log('Directory deleted.');
 ```
 
-### 21. Ensuring Path Exists
-
-Ensure a specific path exists (create if it does not):
-
-```javascript
-fileManager.ensurePathExists('/path/to/directory');
-console.log('Path ensured to exist.');
-```
-
-### 22. Getting All Managed Files
+### 21. Getting All Managed Files
 
 Retrieve all files managed by the `FileManager`:
 
 ```javascript
 console.log('All managed files:', fileManager.files);
 ```
+
+---
 
 ## API Reference
 
