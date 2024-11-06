@@ -40,35 +40,39 @@ require("filemanagenode")
 
 ### 1. Creating a Folder Structure
 
-Create a nested folder structure:
+To create a nested folder structure:
 
 ```javascript
 fileManager.createFolderStructure('/path/to/base', ['folder1', ['folder2', 'folder3']]);
 ```
 
-This creates the following folders:
-folder1, folder2 (inside folder1), folder3 (inside folder1)
+This will create the following folders:
+- `folder1`
+  - `folder2` (inside `folder1`)
+  - `folder3` (inside `folder1`)
 
-EXPLAINATION: The folder structure should have the parent folder followed by an array of child folders. If you specify any nested structure, it will create the parent folder and then the child folders inside it.
+**Explanation:** Specify the parent folder followed by an array of child folders. Nested structures are created by specifying the parent folder first, with each subsequent array representing folders inside it.
 
 ### 2. Deleting a Folder Structure
 
-Delete specific folders based on a provided structure:
+To delete specific folders based on a defined structure:
 
 ```javascript
 fileManager.deleteFolderStructure('/path/to/base', ['folder1', 'folder2', ['subfolder1'], 'folder3', ['subfolder1', ['subsubfolder1']]]);
 ```
 
-This deletes the following folders:
-folder1, subfolder1 from folder2, subsubfolder1 from subfolder1 from folder3
+This will delete the following folders:
+- `folder1`
+- `subfolder1` inside `folder2`
+- `subsubfolder1` inside `subfolder1` inside `folder3`
 
-EXPLAINATION: So if you specify any sibling folder then it won't delete the parent folder, it will only delete the specified folder.
+**Explanation:** Only the specified folders will be deleted. Parent folders remain intact unless explicitly specified. This ensures precise folder deletion without affecting the overall structure.
 
-TAKEAWAY: The folder structure should have the parent folder followed by an array of child folders. If you specify any nested structure, it will only delete the end folder, not the parent folder.
-
-### [Know more about Folder Structure Operations Here](./FOLDERAPI.md)
+**Takeaway:** When defining the folder structure, list the parent folder followed by an array of child folders. Specifying a nested structure will delete only the specified child folders, not their parent folders.
 
 ---
+
+For more details, see [Folder Structure Operations Documentation](./FOLDERAPI.md).
 
 ### 3. Creating a Basic File
 
