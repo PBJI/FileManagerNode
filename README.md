@@ -72,8 +72,6 @@ This will delete the following folders:
 
 ---
 
-For more details, see [Folder Structure Operations Documentation](./FOLDERAPI.md).
-
 ### 3. Creating a Basic File
 
 Create a basic file at the specified path and return its key:
