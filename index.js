@@ -42,7 +42,7 @@ class FileManager {
 	}
 
 	// Delete specific folders based on provided structure
-	deleteFolderStructure(basePath, folderArray) {
+	deleteFolderStructure(basePath, folderArray, mode = "preserve") {
 		const traverseAndDelete = (currentPath, structure) => {
 			let lastDirPath = null; // Store last directory path for deletion checks
 
@@ -60,12 +60,17 @@ class FileManager {
 				} else {
 					// Folder string - create path and save it for conditional deletion check
 					lastDirPath = path.join(currentPath, item);
-
+					console.log(`Checking: ${lastDirPath} and ${basePath}`);
+					console.log(lastDirPath !== basePath);
+					console.log(fs.existsSync(lastDirPath), lastDirPath);
 					// Only delete if the folder exists and it's not the base path
 					if (fs.existsSync(lastDirPath) && lastDirPath !== basePath) {
 						// Check if the next item is not an array to see if we should delete
 						const nextItem = structure[index + 1];
-						if (!Array.isArray(nextItem) && this.isDirectoryEmpty(lastDirPath)) {
+						console.log(nextItem);
+						console.log(!Array.isArray(nextItem));
+						console.log(this.isDirectoryEmpty(lastDirPath));
+						if (!Array.isArray(nextItem) && (this.isDirectoryEmpty(lastDirPath) || mode === "force")) {
 							this.deleteDirectory(lastDirPath);
 						}
 					}
@@ -92,7 +97,26 @@ class FileManager {
 		return fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0;
 	}
 
+	getAbsolutePath(filePath) {
+		// Check if the path is already absolute
+		if (path.isAbsolute(filePath)) {
+			return filePath;
+		}
+
+		const error = new Error();
+    const stackLine = error.stack.split('\n')[3];  // Get the caller line
+
+    // Extract the file path from the stack line (works for both Windows and POSIX paths)
+    const callerPath = stackLine.match(/\((.*):\d+:\d+\)$/) || stackLine.match(/at (.*):\d+:\d+/);
+    const callerDir = callerPath ? path.dirname(callerPath[1]) : __dirname;
+
+		console.log(callerDir);
+		// If relative, resolve it based on the module's directory
+		return path.resolve(callerDir, filePath);
+	}
+
 	createBasicFile(filePath, mode = "preserve") {
+		filePath = this.getAbsolutePath(filePath);
 		this.ensurePathExists(path.dirname(filePath));
 		const baseFileName = path.basename(filePath, path.extname(filePath));
 		const fileExtension = path.extname(filePath);
@@ -126,6 +150,8 @@ class FileManager {
 		}
 
 		// Create the file in 'strict' or 'new' mode if it doesn’t already exist
+
+		console.log(finalPath)
 		fs.writeFileSync(finalPath, "");
 		this.files[key] = finalPath;
 		return key;
@@ -134,6 +160,7 @@ class FileManager {
 	// Modification for createLogFile method in FileManager class
 
 	createLogFile(directoryPath, namingMode = "date", fileMode = "preserve") {
+		directoryPath = this.getAbsolutePath(directoryPath);
 		this.ensurePathExists(directoryPath);
 
 		let finalPath;
@@ -169,6 +196,7 @@ class FileManager {
 		} else {
 			throw new Error("Invalid naming mode specified. Use 'date' or 'increment'.");
 		}
+		finalPath = this.getAbsolutePath(finalPath)
 
 		// Handle file creation based on the specified fileMode
 		if (fileMode === "preserve" && fs.existsSync(finalPath)) {
@@ -186,6 +214,7 @@ class FileManager {
 
 	// Method to create a temporary file
 	createTempFile(filePath, mode = "preserve") {
+		filePath = this.getAbsolutePath(filePath);
 		this.ensurePathExists(path.dirname(filePath));
 		const baseFileName = path.basename(filePath);
 		let tempKey = `temp_${baseFileName}`; // Consistent prefix for temp files
@@ -218,6 +247,7 @@ class FileManager {
 			default:
 				throw new Error("Invalid mode specified. Use 'preserve', 'overwrite', or 'unique'.");
 		}
+		
 
 		// Track the temp file in the relevant data structures
 		this.files[tempKey] = tempPath;
@@ -248,7 +278,7 @@ class FileManager {
 	}
 
 	// Write data to file by key
-	writeToFile(key, data, { pretty = true, newline = true }) {
+	writeToFile(key, data, pretty = true, newline = true) {
 		key = this.resolveKey(key);
 		if (this.files[key]) {
 			const formattedData = this.formatData(data, pretty);
@@ -262,14 +292,14 @@ class FileManager {
 	readFile(key) {
 		key = this.resolveKey(key);
 		if (this.files[key]) {
-			return fs.readFileSync(this.files[key], "utf-8");
+			return fs.readFileSync(this.files[key]);
 		} else {
 			throw new Error("File not found");
 		}
 	}
 
 	// Append data to file by key
-	appendToFile(key, data, { pretty = true, newline = true }) {
+	appendToFile(key, data, pretty = true, newline = true) {
 		key = this.resolveKey(key);
 		if (this.files[key]) {
 			const formattedData = this.formatData(data, pretty);
@@ -315,6 +345,7 @@ class FileManager {
 
 	// Check if path exists, create it if not
 	ensurePathExists(fullPath) {
+		fullPath = this.getAbsolutePath(fullPath);
 		if (!fs.existsSync(fullPath)) {
 			fs.mkdirSync(fullPath, { recursive: true });
 		}
@@ -322,8 +353,9 @@ class FileManager {
 
 	// Delete all temporary files on program exit
 	clearTempFiles() {
-		if (this.tempFiles.size === 0) return;
-		this.tempFiles.forEach((key) => this.deleteFile(key));
+		if (this.tempFiles !== undefined) {
+			this.tempFiles.forEach((key) => this.deleteFile(key));
+		}
 	}
 
 	exists(targetPath) {
@@ -332,6 +364,8 @@ class FileManager {
 
 	// Copy a file from srcPath to destPath
 	copyFile(srcPath, destPath) {
+		srcPath = this.getAbsolutePath(srcPath);
+		destPath = this.getAbsolutePath(destPath);
 		fs.copyFileSync(srcPath, destPath);
 		const key = path.basename(destPath);
 		this.files[key] = destPath;
@@ -339,6 +373,8 @@ class FileManager {
 
 	// Move a file from srcPath to destPath
 	moveFile(srcPath, destPath) {
+		srcPath = this.getAbsolutePath(srcPath);
+		destPath = this.getAbsolutePath(destPath);
 		fs.renameSync(srcPath, destPath);
 		const key = path.basename(destPath);
 		this.files[key] = destPath;
@@ -347,6 +383,7 @@ class FileManager {
 
 	// Retrieve metadata for a specific file
 	getMetadata(filePath) {
+		filePath = this.getAbsolutePath(filePath);
 		if (!this.exists(filePath)) throw new Error("File does not exist");
 		const stats = fs.statSync(filePath);
 		return {
@@ -360,6 +397,7 @@ class FileManager {
 
 	// Search for files in a directory that match a specific query
 	search(directoryPath, query) {
+		directoryPath = this.getAbsolutePath(directoryPath);
 		if (!this.exists(directoryPath)) throw new Error("Directory does not exist");
 
 		const results = [];
@@ -376,17 +414,20 @@ class FileManager {
 
 	// Backup a file by creating a copy with a timestamp
 	backupFile(filePath) {
+		filePath = this.getAbsolutePath(filePath);
 		if (!this.exists(filePath)) throw new Error("File does not exist");
-
+		
 		const timestamp = new Date().toISOString().replace(/:/g, "-");
 		const backupPath = filePath.replace(/(\.\w+)$/, `_${timestamp}$1`);
-
+		
 		this.copyFile(filePath, backupPath);
 		return backupPath;
 	}
-
+	
 	// Compress a file and save as .gz
 	compressFile(filePath, destPath) {
+		filePath = this.getAbsolutePath(filePath);
+		destPath = this.getAbsolutePath(destPath);
 		if (!this.exists(filePath)) throw new Error("File does not exist");
 
 		const input = fs.createReadStream(filePath);
