@@ -322,6 +322,7 @@ class FileManager {
 
 	// Delete all temporary files on program exit
 	clearTempFiles() {
+		if (this.tempFiles.size === 0) return;
 		this.tempFiles.forEach((key) => this.deleteFile(key));
 	}
 

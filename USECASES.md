@@ -114,12 +114,6 @@
 
 ---
 
-#### **`resolveKey`**
-- **User Settings Management**: A web app allows users to customize settings using aliases. When users access their settings using an alias, this function resolves it to the actual key in the database, ensuring that the correct settings are retrieved.
-- **Dynamic Content Retrieval**: In a content management system, this function resolves user-defined aliases for content blocks, allowing content editors to insert dynamic content easily without remembering complex identifiers.
-
----
-
 #### **`search`**
 - **Asset Management Application**: In an asset management web application, this function enables users to search for specific assets within a directory based on keywords. For instance, users can find all images containing the keyword "logo" in their asset folder.
 - **E-commerce Platform**: An e-commerce backend uses this function to implement a product search feature, allowing customers to search for products by name or description. This enhances user experience by providing quick access to relevant products.
