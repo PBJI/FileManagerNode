@@ -46,13 +46,25 @@ Create a nested folder structure:
 fileManager.createFolderStructure('/path/to/base', ['folder1', ['folder2', 'folder3']]);
 ```
 
+This creates the following folders:
+folder1, folder2 (inside folder1), folder3 (inside folder1)
+
+EXPLAINATION: The folder structure should have the parent folder followed by an array of child folders. If you specify any nested structure, it will create the parent folder and then the child folders inside it.
+
 ### 2. Deleting a Folder Structure
 
 Delete specific folders based on a provided structure:
 
 ```javascript
-fileManager.deleteFolderStructure('/path/to/base', ['folder1', '*', ['subfolder1']]);
+fileManager.deleteFolderStructure('/path/to/base', ['folder1', 'folder2', ['subfolder1'], 'folder3', ['subfolder1', ['subsubfolder1']]]);
 ```
+
+This deletes the following folders:
+folder1, subfolder1 from folder2, subsubfolder1 from subfolder1 from folder3
+
+EXPLAINATION: So if you specify any sibling folder then it won't delete the parent folder, it will only delete the specified folder.
+
+TAKEAWAY: The folder structure should have the parent folder followed by an array of child folders. If you specify any nested structure, it will only delete the end folder, not the parent folder.
 
 ### [Know more about Folder Structure Operations Here](./FOLDERAPI.md)
 
