@@ -279,171 +279,171 @@ The `fileManager` object provides methods for managing files and directories wit
 #### Methods
 
 1. **`createFolderStructure(basePath, folderArray)`**
-- Creates a nested folder structure based on the provided array.
-- **Parameters**:
-- `basePath` (string): The root path where the folder structure should be created.
-- `folderArray` (Array): An array defining the folder structure, which can include nested arrays.
+  - Creates a nested folder structure based on the provided array.
+  - **Parameters**:
+  - `basePath` (string): The root path where the folder structure should be created.
+  - `folderArray` (Array): An array defining the folder structure, which can include nested arrays.
 
 2. **`deleteFolderStructure(basePath, folderArray, mode)`**
-- Deletes specified folders and their contents based on the provided structure.
-- **Parameters**:
-- `basePath` (string): The root path where the folders are located.
-- `folderArray` (Array): An array defining the folder structure to delete.
-- `mode` (string): The deletion mode, either "preserve" or "force".
-- **Mode Options**:
-- "preserve": Deletes only the specified folders, also if empty.
-- "force": Deletes the specified folders and their contents.
+  - Deletes specified folders and their contents based on the provided structure.
+  - **Parameters**:
+  - `basePath` (string): The root path where the folders are located.
+  - `folderArray` (Array): An array defining the folder structure to delete.
+  - `mode` (string): The deletion mode, either "preserve" or "force".
+  - **Mode Options**:
+  - "preserve": Deletes only the specified folders, also if empty.
+- "for  ce": Deletes the specified folders and their contents.
 
 3. **`deleteDirectory(dirPath)`**
-- Helper function to delete a directory and all its contents.
-- **Parameters**:
-  - `dirPath` (string): The path of the directory to be deleted.
+  - Helper function to delete a directory and all its contents.
+  - **Parameters**:
+    - `dirPath` (string): The path of the directory to be deleted.
 
 4. **`createBasicFile(filePath, fileMode)`**
-- Creates a basic file at the specified path.
-- **Parameters**:
-  - `filePath` (string): The path where the file should be created.
-  - `fileMode` (string): The mode in which to create the file, "preserve", "overwrite" or "unique"
-- **Filemode Options**:
-  - "preserve": If the file already exists, it will not be overwritten.
-  - "overwrite": If the file already exists, it will be overwritten.
-  - "unique": If the file already exists, a numeric suffix will be added to create a unique file.
-- **Returns**: A key (string) representing the file.
+  - Creates a basic file at the specified path.
+  - **Parameters**:
+    - `filePath` (string): The path where the file should be created.
+    - `fileMode` (string): The mode in which to create the file, "preserve", "overwrite" or "unique"
+  - **Filemode Options**:
+    - "preserve": If the file already exists, it will not be overwritten.
+    - "overwrite": If the file already exists, it will be overwritten.
+    - "unique": If the file already exists, a numeric suffix will be added to create a unique file.
+  - **Returns**: A key (string) representing the file.
 
 5. **`createLogFile(directoryPath, namingMode = "date", fileMode = "reuse")`**
-- Creates a log file in the specified directory, with options for naming based on date or increment.
-- **Parameters**:
-  - `directoryPath` (string): The path where the log file should be created.
-  - `namingMode` (string): The naming mode for the log file, either "date" or "increment".
-  - `fileMode` (string): The mode in which to create the file, "preserve", "overwrite" or "unique"
-- **Filemode Options**:
-  - "preserve": If the file already exists, it will not be overwritten.
-  - "overwrite": If the file already exists, it will be overwritten.
-  - "unique": If the file already exists, a numeric suffix will be added to create a unique file.
-- **Returns**: A key (string) representing the log file.
+  - Creates a log file in the specified directory, with options for naming based on date or increment.
+  - **Parameters**:
+    - `directoryPath` (string): The path where the log file should be created.
+    - `namingMode` (string): The naming mode for the log file, either "date" or "increment".
+    - `fileMode` (string): The mode in which to create the file, "preserve", "overwrite" or "unique"
+  - **Filemode Options**:
+    - "preserve": If the file already exists, it will not be overwritten.
+    - "overwrite": If the file already exists, it will be overwritten.
+    - "unique": If the file already exists, a numeric suffix will be added to create a unique file.
+  - **Returns**: A key (string) representing the log file.
 
 6. **`createTempFile(filePath, fileMode)`**
-- Creates a temporary file with a prefixed name for identification.
-- **Parameters**:
-  - `filePath` (string): The path for the temporary file.
-- **Filemode Options**:
-  - "preserve": If the file already exists, it will not be overwritten.
-  - "overwrite": If the file already exists, it will be overwritten.
-  - "unique": If the file already exists, a numeric suffix will be added to create a unique file.
-- **Returns**: A key (string) for the temporary file.
+  - Creates a temporary file with a prefixed name for identification.
+  - **Parameters**:
+    - `filePath` (string): The path for the temporary file.
+  - **Filemode Options**:
+    - "preserve": If the file already exists, it will not be overwritten.
+    - "overwrite": If the file already exists, it will be overwritten.
+    - "unique": If the file already exists, a numeric suffix will be added to create a unique file.
+  - **Returns**: A key (string) for the temporary file.
 
 7. **`addAlias(alias, originalKey)`**
-- Adds an alias for an original file key.
-- **Parameters**:
-  - `alias` (string): The alias name to be added.
-  - `originalKey` (string): The original file key associated with the alias.
-- **Throws**: An error if the original key does not exist or if the alias conflicts with existing keys.
+  - Adds an alias for an original file key.
+  - **Parameters**:
+    - `alias` (string): The alias name to be added.
+    - `originalKey` (string): The original file key associated with the alias.
+  - **Throws**: An error if the original key does not exist or if the alias conflicts with existing keys.
 
 8. **`resolveKey(key)`**
-- Resolves an alias to its original key.
-- **Parameters**:
-  - `key` (string): The key or alias to be resolved.
-- **Returns**: The resolved original key (string).
+  - Resolves an alias to its original key.
+  - **Parameters**:
+    - `key` (string): The key or alias to be resolved.
+  - **Returns**: The resolved original key (string).
 
 9. **`writeToFile(key, data)`**
-- Writes data to a file identified by the provided key.
-- Writes json data to a file in pretty format by default.
-- **Parameters**:
-  - `key` (string): The key representing the file.
-  - `data` (string): The data to be written to the file.
-  - `pretty` (boolean): By default true, if false, object (json) data will be written as it is.
-- **Throws**: An error if the file is not found.
+  - Writes data to a file identified by the provided key.
+  - Writes json data to a file in pretty format by default.
+  - **Parameters**:
+    - `key` (string): The key representing the file.
+    - `data` (string): The data to be written to the file.
+    - `pretty` (boolean): By default true, if false, object (json) data will be written as it is.
+  - **Throws**: An error if the file is not found.
 
 10. **`readFile(key)`**
-- Reads data from a file identified by the provided key.
-- **Parameters**:
-  - `key` (string): The key representing the file.
-- **Returns**: The content of the file (string).
-- **Throws**: An error if the file is not found.
+  - Reads data from a file identified by the provided key.
+  - **Parameters**:
+    - `key` (string): The key representing the file.
+  - **Returns**: The content of the file (string).
+  - **Throws**: An error if the file is not found.
 
 11. **`appendToFile(key, data)`**
-- Appends data to a file identified by the provided key.
-- Appends json data to a file in pretty format by default.
-- **Parameters**:
-  - `key` (string): The key representing the file.
-  - `data` (string): The data to be appended to the file.
-  - `pretty` (boolean): By default true, if false, object (json) data will be appended as it is.
-- **Throws**: An error if the file is not found.
+  - Appends data to a file identified by the provided key.
+  - Appends json data to a file in pretty format by default.
+  - **Parameters**:
+    - `key` (string): The key representing the file.
+    - `data` (string): The data to be appended to the file.
+    - `pretty` (boolean): By default true, if false, object (json) data will be appended as it is.
+  - **Throws**: An error if the file is not found.
 
 12. **`renameFile(oldKey, newName)`**
-- Renames a file from an old key to a new name.
-- **Parameters**:
-  - `oldKey` (string): The original key of the file.
-  - `newName` (string): The new name for the file.
-- **Throws**: An error if the file is not found.
+  - Renames a file from an old key to a new name.
+  - **Parameters**:
+    - `oldKey` (string): The original key of the file.
+    - `newName` (string): The new name for the file.
+  - **Throws**: An error if the file is not found.
 
 13. **`deleteFile(key)`**
-- Deletes a file identified by the provided key.
-- **Parameters**:
-  - `key` (string): The key representing the file.
-- **Throws**: An error if the file is not found or has already been deleted.
+  - Deletes a file identified by the provided key.
+  - **Parameters**:
+    - `key` (string): The key representing the file.
+  - **Throws**: An error if the file is not found or has already been deleted.
 
 14. **`ensurePathExists(fullPath)`**
-- Checks if a given path exists; creates it if not.
-- **Parameters**:
-  - `fullPath` (string): The path to be checked or created.
+  - Checks if a given path exists; creates it if not.
+  - **Parameters**:
+    - `fullPath` (string): The path to be checked or created.
 
 15. **`clearTempFiles()`**
-- Deletes all temporary files created by the `FileManager` upon program exit.
+- Dele  tes all temporary files created by the `FileManager` upon program exit.
 
 16. **`exists(targetPath)`**
-- Checks if a specified path exists.
-- **Parameters**:
-  - `targetPath` (string): The path to check.
-- **Returns**: A boolean indicating the existence of the path.
+  - Checks if a specified path exists.
+  - **Parameters**:
+    - `targetPath` (string): The path to check.
+  - **Returns**: A boolean indicating the existence of the path.
 
 17. **`copyFile(srcPath, destPath)`**
-- Copies a file from the source path to the destination path.
-- **Parameters**:
-  - `srcPath` (string): The source file path.
-  - `destPath` (string): The destination file path.
-- **Returns**: A key (string) representing the copied file.
+  - Copies a file from the source path to the destination path.
+  - **Parameters**:
+    - `srcPath` (string): The source file path.
+    - `destPath` (string): The destination file path.
+  - **Returns**: A key (string) representing the copied file.
 
 18. **`moveFile(srcPath, destPath)`**
-- Moves a file from the source path to the destination path.
-- **Parameters**:
-  - `srcPath` (string): The source file path.
-  - `destPath` (string): The destination file path.
-- **Returns**: A key (string) representing the moved file.
+  - Moves a file from the source path to the destination path.
+  - **Parameters**:
+    - `srcPath` (string): The source file path.
+    - `destPath` (string): The destination file path.
+  - **Returns**: A key (string) representing the moved file.
 
 19. **`getMetadata(filePath)`**
-- Retrieves metadata for a specified file.
-- **Parameters**:
-  - `filePath` (string): The path of the file.
-- **Returns**: An object containing the file's size, creation date, modification date, and type (directory or file).
-- **Throws**: An error if the file does not exist.
+  - Retrieves metadata for a specified file.
+  - **Parameters**:
+    - `filePath` (string): The path of the file.
+  - **Returns**: An object containing the file's size, creation date, modification date, and type (directory or file).
+  - **Throws**: An error if the file does not exist.
 
 20. **`search(directoryPath, query)`**
-- Searches for files in a specified directory that match a given query.
-- **Parameters**:
-  - `directoryPath` (string): The path of the directory to search in.
-  - `query` (string): The query string to match against file names.
-- **Returns**: An array of matching file paths.
-- **Throws**: An error if the directory does not exist.
+  - Searches for files in a specified directory that match a given query.
+  - **Parameters**:
+    - `directoryPath` (string): The path of the directory to search in.
+    - `query` (string): The query string to match against file names.
+  - **Returns**: An array of matching file paths.
+  - **Throws**: An error if the directory does not exist.
 
 21. **`backupFile(filePath)`**
-- Creates a backup of a specified file by copying it with a timestamped name.
-- **Parameters**:
-  - `filePath` (string): The path of the file to be backed up.
-- **Returns**: The path of the backup file.
-- **Throws**: An error if the file does not exist.
+  - Creates a backup of a specified file by copying it with a timestamped name.
+  - **Parameters**:
+    - `filePath` (string): The path of the file to be backed up.
+  - **Returns**: The path of the backup file.
+  - **Throws**: An error if the file does not exist.
 
 22. **`compressFile(filePath, destPath)`**
-- Compresses a specified file and saves it as a `.gz` file.
-- **Parameters**:
-  - `filePath` (string): The path of the file to be compressed.
-  - `destPath` (string): The destination path for the compressed file.
-- **Returns**: A promise that resolves to the path of the compressed file.
-- **Throws**: An error if the file does not exist.
+  - Compresses a specified file and saves it as a `.gz` file.
+  - **Parameters**:
+    - `filePath` (string): The path of the file to be compressed.
+    - `destPath` (string): The destination path for the compressed file.
+  - **Returns**: A promise that resolves to the path of the compressed file.
+  - **Throws**: An error if the file does not exist.
 
 ---
 
-### [Learn Use Case Scenarios For This Class](./USECASES.md)
+### [Some Usecases for this library](./USECASES.md)
 
 ---
 
