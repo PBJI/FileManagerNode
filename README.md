@@ -279,36 +279,36 @@ The `fileManager` object provides methods for managing files and directories wit
 #### Methods
 
 1. **`createFolderStructure(basePath, folderArray)`**
-  - Creates a nested folder structure based on the provided array.
-  - **Parameters**:
+- Creates a nested folder structure based on the provided array.
+- **Parameters**:
   - `basePath` (string): The root path where the folder structure should be created.
   - `folderArray` (Array): An array defining the folder structure, which can include nested arrays.
 
 2. **`deleteFolderStructure(basePath, folderArray, mode)`**
-  - Deletes specified folders and their contents based on the provided structure.
-  - **Parameters**:
+- Deletes specified folders and their contents based on the provided structure.
+- **Parameters**:
   - `basePath` (string): The root path where the folders are located.
   - `folderArray` (Array): An array defining the folder structure to delete.
   - `mode` (string): The deletion mode, either "preserve" or "force".
-  - **Mode Options**:
+- **Mode Options**:
   - "preserve": Deletes only the specified folders, also if empty.
-- "for  ce": Deletes the specified folders and their contents.
+  - "force": Deletes the specified folders and their contents.
 
 3. **`deleteDirectory(dirPath)`**
-  - Helper function to delete a directory and all its contents.
-  - **Parameters**:
-    - `dirPath` (string): The path of the directory to be deleted.
+- Helper function to delete a directory and all its contents.
+- **Parameters**:
+  - `dirPath` (string): The path of the directory to be deleted.
 
 4. **`createBasicFile(filePath, fileMode)`**
-  - Creates a basic file at the specified path.
-  - **Parameters**:
-    - `filePath` (string): The path where the file should be created.
-    - `fileMode` (string): The mode in which to create the file, "preserve", "overwrite" or "unique"
-  - **Filemode Options**:
-    - "preserve": If the file already exists, it will not be overwritten.
-    - "overwrite": If the file already exists, it will be overwritten.
-    - "unique": If the file already exists, a numeric suffix will be added to create a unique file.
-  - **Returns**: A key (string) representing the file.
+- Creates a basic file at the specified path.
+- **Parameters**:
+  - `filePath` (string): The path where the file should be created.
+  - `fileMode` (string): The mode in which to create the file, "preserve", "overwrite" or "unique"
+- **Filemode Options**:
+  - "preserve": If the file already exists, it will not be overwritten.
+  - "overwrite": If the file already exists, it will be overwritten.
+  - "unique": If the file already exists, a numeric suffix will be added to create a unique file.
+- **Returns**: A key (string) representing the file.
 
 5. **`createLogFile(directoryPath, namingMode = "date", fileMode = "reuse")`**
   - Creates a log file in the specified directory, with options for naming based on date or increment.
@@ -389,7 +389,7 @@ The `fileManager` object provides methods for managing files and directories wit
     - `fullPath` (string): The path to be checked or created.
 
 15. **`clearTempFiles()`**
-- Dele  tes all temporary files created by the `FileManager` upon program exit.
+- Deletes all temporary files created by the `FileManager` upon program exit.
 
 16. **`exists(targetPath)`**
   - Checks if a specified path exists.
