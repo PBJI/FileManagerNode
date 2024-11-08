@@ -60,16 +60,10 @@ class FileManager {
 				} else {
 					// Folder string - create path and save it for conditional deletion check
 					lastDirPath = path.join(currentPath, item);
-					console.log(`Checking: ${lastDirPath} and ${basePath}`);
-					console.log(lastDirPath !== basePath);
-					console.log(fs.existsSync(lastDirPath), lastDirPath);
 					// Only delete if the folder exists and it's not the base path
 					if (fs.existsSync(lastDirPath) && lastDirPath !== basePath) {
 						// Check if the next item is not an array to see if we should delete
 						const nextItem = structure[index + 1];
-						console.log(nextItem);
-						console.log(!Array.isArray(nextItem));
-						console.log(this.isDirectoryEmpty(lastDirPath));
 						if (!Array.isArray(nextItem) && (this.isDirectoryEmpty(lastDirPath) || mode === "force")) {
 							this.deleteDirectory(lastDirPath);
 						}
@@ -109,10 +103,42 @@ class FileManager {
     // Extract the file path from the stack line (works for both Windows and POSIX paths)
     const callerPath = stackLine.match(/\((.*):\d+:\d+\)$/) || stackLine.match(/at (.*):\d+:\d+/);
     const callerDir = callerPath ? path.dirname(callerPath[1]) : __dirname;
-
-		console.log(callerDir);
 		// If relative, resolve it based on the module's directory
 		return path.resolve(callerDir, filePath);
+	}
+
+	// Recursively list all folders given a base path
+	readFolderStructure(basePath) {
+		const folders = [];
+		const listFoldersRecursive = (currentPath) => {
+			const items = fs.readdirSync(currentPath);
+			items.forEach((item) => {
+				const itemPath = path.join(currentPath, item);
+				if (fs.statSync(itemPath).isDirectory()) {
+					folders.push(itemPath);
+					listFoldersRecursive(itemPath);
+				}
+			});
+		};
+		listFoldersRecursive(basePath);
+		return folders;
+	}
+
+	// Only list file of the given base path, no recursion
+	listFile(basePath) {
+		const files = [];
+		const items = fs.readdirSync(basePath);
+		items.forEach((item) => {
+			const itemPath = path.join(basePath, item);
+			if (fs.statSync(itemPath).isFile()) {
+				files.push(itemPath);
+			}
+		});
+		return files;
+	}
+
+	whatIsYourName(filePath) {
+		return path.basename(filePath);
 	}
 
 	createBasicFile(filePath, mode = "preserve") {
@@ -150,8 +176,6 @@ class FileManager {
 		}
 
 		// Create the file in 'strict' or 'new' mode if it doesn’t already exist
-
-		console.log(finalPath)
 		fs.writeFileSync(finalPath, "");
 		this.files[key] = finalPath;
 		return key;
@@ -439,6 +463,26 @@ class FileManager {
 				.pipe(output)
 				.on("finish", () => resolve(destPath))
 				.on("error", reject);
+		});
+	}
+
+	// Compress a folder, to save space
+	compressFolder(folderPath, destPath) {
+		folderPath = this.getAbsolutePath(folderPath);
+		destPath = this.getAbsolutePath(destPath);
+		if (!this.exists(folderPath)) throw new Error("Folder does not exist");
+
+		const archive = require("archiver")("zip", { zlib: { level: 9 } });
+		const output = fs.createWriteStream(destPath);
+
+		return new Promise((resolve, reject) => {
+			archive
+				.directory(folderPath, false)
+				.on("error", reject)
+				.pipe(output);
+
+			output.on("close", () => resolve(destPath));
+			archive.finalize();
 		});
 	}
 }

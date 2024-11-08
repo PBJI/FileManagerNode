@@ -28,7 +28,7 @@ You can install the `FileManager` package using npm:
 npm install filemanagernode
 ```
 
-## Usage
+## Example Usage
 
 To use the `fileManager` object in your application, simply require the package in any connected project module and file manager will be shared across all the project files, no need to pass it around:
 
@@ -90,45 +90,7 @@ fileManager.writeToFile(fileKey, 'Hello, world!');
 console.log('Data written to file.');
 ```
 
-### 5. Reading from a File
-
-Read data from a file specified by its key:
-
-```javascript
-const data = fileManager.readFile(fileKey);
-console.log(`Data read from file: ${data}`);
-```
-
-### 6. Appending to a File
-
-Append data to a file specified by its key:
-
-```javascript
-fileManager.appendToFile(fileKey, ' Appending this text.');
-console.log('Data appended to file.');
-```
-
-### 7. Renaming a File
-
-Rename a file:
-
-```javascript
-fileManager.renameFile(fileKey, 'newfile.txt');
-console.log('File renamed.');
-```
-
-### 8. Deleting a File
-
-Delete a file specified by its key:
-
-```javascript
-fileManager.deleteFile(fileKey);
-console.log('File deleted.');
-```
-
----
-
-### 9. Creating a Log File
+### 5. Creating a Log File
 
 Create a log file in **date mode**. This will create a file named with the current date:
 
@@ -144,18 +106,7 @@ const logFileKeyIncr = fileManager.createLogFile('/path/to/logs', 'increment', f
 console.log(`Log file created in date mode with key: ${logFileKeyIncr}`);
 ```
 
-### 10. Creating a Temporary File
-
-Create a temporary file and return its key, temporary files are special because they get automatically deleted after the program exits:
-
-```javascript
-const tempKey = fileManager.createTempFile('/path/to/tempfile.txt');
-console.log(`Created temporary file with key: ${tempKey}`);
-```
-
----
-
-### 11. Adding an Alias
+### 6. Adding an Alias
 
 Add an alias for a file:
 
@@ -165,16 +116,7 @@ console.log('Alias added.');
 ```
 ---
 
-### 12. Checking File Existence
-
-Check if a target path exists:
-
-```javascript
-const exists = fileManager.exists('/path/to/file.txt');
-console.log(`File exists: ${exists}`);
-```
-
-### 13. Copying a File
+### 7. Copying a File
 
 Copy a file from source path to destination path:
 
@@ -183,77 +125,7 @@ fileManager.copyFile('/path/to/source.txt', '/path/to/destination.txt');
 console.log('File copied.');
 ```
 
-### 14. Moving a File
-
-Move a file from source path to destination path:
-
-```javascript
-fileManager.moveFile('/path/to/source.txt', '/path/to/new/location.txt');
-console.log('File moved.');
-```
-
-### 15. Retrieving Metadata
-
-Get metadata for a specific file:
-
-```javascript
-const metadata = fileManager.getMetadata('/path/to/file.txt');
-console.log('File metadata:', metadata);
-```
-
-### 16. Searching for Files
-
-Search for files in a directory that match a specific query:
-
-```javascript
-const results = fileManager.search('/path/to/directory', 'searchTerm');
-console.log('Search results:', results);
-```
-
-### 17. Backing Up a File
-
-Backup a file by creating a copy with a timestamp:
-
-```javascript
-const backupPath = fileManager.backupFile('/path/to/file.txt');
-console.log(`Backup created at: ${backupPath}`);
-```
-
-### 18. Compressing a File
-
-Compress a file and save it as `.gz`:
-
-```javascript
-fileManager.compressFile('/path/to/file.txt', '/path/to/file.txt.gz')
-  .then((compressedPath) => {
-    console.log(`File compressed to: ${compressedPath}`);
-  })
-  .catch((err) => {
-    console.error('Error compressing file:', err);
-  });
-```
-
----
-
-### 19. Clearing Temporary Files
-
-Temporary files are automatically cleared on program exit, but you can manually call the method:
-
-```javascript
-fileManager.clearTempFiles();
-console.log('Temporary files cleared.');
-```
-
-### 20. Deleting a Directory
-
-Delete a directory and all its contents:
-
-```javascript
-fileManager.deleteDirectory('/path/to/directory');
-console.log('Directory deleted.');
-```
-
-### 21. Getting All Managed Files
+### 8. Getting All Managed Files
 
 Retrieve all files managed by the `FileManager`:
 
@@ -269,6 +141,36 @@ console.log('All managed files:', fileManager.files);
 ### `fileManager`
 
 The `fileManager` object provides methods for managing files and directories within a Node.js environment.
+
+#### Method List
+
+- **`createFolderStructure(basePath, folderArray)`**
+- **`deleteFolderStructure(basePath, folderArray, mode)`**
+- **`deleteDirectory(dirPath)`**
+- **`createBasicFile(filePath, fileMode)`**
+- **`createLogFile(directoryPath, namingMode = "date", fileMode = "reuse")`**
+- **`createTempFile(filePath, fileMode)`**
+- **`addAlias(alias, originalKey)`**
+- **`resolveKey(key)`**
+- **`writeToFile(key, data)`**
+- **`readFile(key)`**
+- **`appendToFile(key, data)`**
+- **`renameFile(oldKey, newName)`**
+- **`deleteFile(key)`**
+- **`ensurePathExists(fullPath)`**
+- **`clearTempFiles()`**
+- **`exists(targetPath)`**
+- **`copyFile(srcPath, destPath)`**
+- **`moveFile(srcPath, destPath)`**
+- **`getMetadata(filePath)`**
+- **`search(directoryPath, query)`**
+- **`backupFile(filePath)`**
+- **`compressFile(filePath, destPath)`**
+- **`compressFolder(folderPath, destPath)`**
+- **`readFolderStructure(folderPath)`**
+- **`listFiles(folderPath)`**
+- **`whatIsYourName(filePath)`**
+
 
 #### Data Members
 
@@ -439,6 +341,35 @@ The `fileManager` object provides methods for managing files and directories wit
     - `filePath` (string): The path of the file to be compressed.
     - `destPath` (string): The destination path for the compressed file.
   - **Returns**: A promise that resolves to the path of the compressed file.
+  - **Throws**: An error if the file does not exist.
+
+23. **`compressFolder(folderPath, destPath)`**
+  - Compresses a specified folder and saves it as a `.gz` file.
+  - **Parameters**:
+    - `folderPath` (string): The path of the folder to be compressed.
+    - `destPath` (string): The destination path for the compressed file.
+  - **Returns**: A promise that resolves to the path of the compressed file.
+  - **Throws**: An error if the folder does not exist.
+
+24. **`readFolderStructure(folderPath)`**
+  - Reads the structure of a specified folder and returns its contents.
+  - **Parameters**:
+    - `folderPath` (string): The path of the folder to read.
+  - **Returns**: An array representing the folder structure.
+  - **Throws**: An error if the folder does not exist.
+
+25. **`listFiles(folderPath)`**
+  - Lists all files in a specified folder.
+  - **Parameters**:
+    - `folderPath` (string): The path of the folder to list files from.
+  - **Returns**: An array of file paths.
+  - **Throws**: An error if the folder does not exist.
+
+26. **`whatIsYourName(filePath)`**
+  - Gets the name of a file from its path.
+  - **Parameters**:
+    - `filePath` (string): The path of the file.
+  - **Returns**: The name of the file.
   - **Throws**: An error if the file does not exist.
 
 ---
