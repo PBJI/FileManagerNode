@@ -35,5 +35,8 @@
   "repository": {
     "url": "https://github.com/PBJI/FileManagerNode"
   },
-  "homepage": "https://github.com/PBJI/FileManagerNode#readme"
+  "homepage": "https://github.com/PBJI/FileManagerNode#readme",
+  "dependencies": {
+    "archiver": "^7.0.1"
+  }
 }

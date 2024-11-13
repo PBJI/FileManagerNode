@@ -148,7 +148,7 @@ class FileManager {
 		const fileExtension = path.extname(filePath);
 
 		let finalPath = filePath;
-		let key = baseFileName;
+		let key = String(Math.round(Math.random()*100)) + baseFileName;
 
 		switch (mode) {
 			case "preserve":
@@ -166,7 +166,7 @@ class FileManager {
 				let counter = 1;
 				while (fs.existsSync(finalPath)) {
 					finalPath = path.join(path.dirname(filePath), `${baseFileName}_${counter}${fileExtension}`);
-					key = `${baseFileName}_${counter}`;
+					key = `${String(Math.round(Math.random()*100))}_${baseFileName}_${counter}`;
 					counter++;
 				}
 				break;
@@ -231,7 +231,7 @@ class FileManager {
 			fs.writeFileSync(finalPath, ""); // Create new file if it doesn't exist
 		}
 
-		const key = path.basename(finalPath);
+		const key = String(Math.round(Math.random()*100)) + path.basename(finalPath);
 		this.files[key] = finalPath;
 		return key;
 	}
@@ -274,6 +274,7 @@ class FileManager {
 		
 
 		// Track the temp file in the relevant data structures
+		tempKey = tempKey + String(Math.round(Math.random()*100));
 		this.files[tempKey] = tempPath;
 		this.tempFiles.add(tempKey);
 		return tempKey;
